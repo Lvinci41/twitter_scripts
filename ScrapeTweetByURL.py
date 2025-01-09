@@ -144,8 +144,7 @@ tweet_details_dictList = []
 for tweet in result:
     try:
         result = scrape_tweet(tweet[0])
-        print(result[3:])
-        tweet_text = remove_non_utf8(result[0].replace("\n\n",". ").replace("\n"," ").replace(",",";")) #replace new lines with a full-stop and commas with semi-colons to resolve formatting issues when saving as csv
+        tweet_text = remove_non_utf8(result[0].replace("\n\n",". ").replace("\n"," ").replace(",",";")).replace("â€™","'").replace("â€œ",'"').replace("â€",'"') #replace new lines with a full-stop and commas with semi-colons to resolve formatting issues when saving as csv
         tweet_tags = result[1]
         tweet_links = result[2]
         tweet_views = result[3] 
@@ -178,7 +177,7 @@ for tweet in result:
     else:
         print("Failed to retrieve tweet text %s" % tweet[0])
 
-filename = timestamp + 'tweet_details.csv'
+filename = timestamp + '_tweet-details.csv'
 
 #print(tweet_details_dictList)
 with open(filename, 'w', encoding='utf-8') as file: 
