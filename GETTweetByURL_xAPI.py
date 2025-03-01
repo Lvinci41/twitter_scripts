@@ -107,14 +107,22 @@ def get_tweet_details_consol(tweet_url, bearer_token):
 def get_tweet_id_from_url(tweet_id):
     return tweet_url.split('/')[-1]
 
-tweet_url = input("Enter the URL of the tweet: ")
 
-with open("x_keys.csv", "r") as csvfile:
-    reader = csv.reader(csvfile)
-    keys = list(reader)[1:]
+if __name__ == '__main__':
+    try:
+        tweet_url = input("Enter the URL of the tweet: ")
+        with open("x_keys.csv", "r") as csvfile:
+            reader = csv.reader(csvfile)
+            keys = list(reader)[1:]
+        
+        x_key = keys[0]
+        x_sk = keys[1]
 
-x_key = keys[0]
-x_sk = keys[1]
+        print( get_tweet_details_consol(tweet_id, create_bearer_token(x_key, x_sk) ) )
+        
+    except Exception as e:
+        print(f"Error: {e}")
 
-print( get_tweet_details_consol(tweet_id, create_bearer_token(x_key, x_sk) ) )
+
+
    
