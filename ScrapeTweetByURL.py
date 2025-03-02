@@ -131,64 +131,70 @@ def remove_non_utf8(input_string):
     # Encode the string to bytes, ignoring errors, then decode back to string
     return input_string.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
 
-timestamp = datetime.today().strftime('%Y%m%d%H%M')
-print( "START TIME: ", timestamp)
+if __name__ == '__main__':
 
-with open("tweet_list.csv", "r") as csvfile: #file contains a header
-    reader = csv.reader(csvfile)
-    counts = list(reader)[1:]
-
-result = list(filter(None, counts))
-tweet_details_dictList = []
-
-for tweet in result:
     try:
-        result = scrape_tweet(tweet[0])
-        tweet_text = remove_non_utf8(result[0].replace("\n\n",". ").replace("\n"," ").replace(",",";")).replace("â€™","'").replace("â€œ",'"').replace("â€",'"') #replace new lines with a full-stop and commas with semi-colons to resolve formatting issues when saving as csv
-        tweet_tags = result[1]
-        tweet_links = result[2]
-        tweet_views = result[3] 
-        tweet_likes = result[4]
-        tweet_rts = result[5]
-        tweet_replies = result[6]
-        tweet_bm = result[7]
-        tweet_date = result[8].replace("·",". ").replace(","," ").replace("\n"," ").replace("Last edited","")
-          
-        time.sleep(3) #extra buffer to prevent rate limit issues
-    except:
-        print("Failed to grab tweet %s" % tweet[0])
-        continue
-    
-    if tweet_text:
-        tweet_text_dict = {}
-        tweet_text_dict['id']=tweet[0][-19:]
-        tweet_text_dict['text']=tweet_text[1:] #[1:] removes the leading space caused by the replace operators in line 102
-        tweet_text_dict['tags'] = tweet_tags[1:]
-        tweet_text_dict['links'] = tweet_links[1:]
-        tweet_text_dict['views'] = tweet_views   
-        tweet_text_dict['likes'] = tweet_likes 
-        tweet_text_dict['rts'] = tweet_rts 
-        tweet_text_dict['replies'] = tweet_replies 
-        tweet_text_dict['bookmarks'] = tweet_bm 
-        tweet_text_dict['date'] = tweet_date              
+        timestamp = datetime.today().strftime('%Y%m%d%H%M')
+        print( "START TIME: ", timestamp)
         
-        tweet_details_dictList.append(tweet_text_dict)
-
-    else:
-        print("Failed to retrieve tweet text %s" % tweet[0])
-
-filename = timestamp + '_tweet-details.csv'
-
-#print(tweet_details_dictList)
-with open(filename, 'w', encoding='utf-8') as file: 
-    # Write the header 
-    header = ','.join(tweet_details_dictList[0].keys())  # Get the keys from the first dictionary 
-    file.write(header + '\n')  # Write header followed by a newline 
-     
-    # Write the data 
-    for entry in tweet_details_dictList: 
-        row = ','.join(str(entry[key]) for key in entry)  # Convert each value to string and join with commas 
-        file.write(row + '\n')  # Write each row followed by a newline 
- 
-print(f"Data exported to {filename}")   
-print( "END TIME: ", datetime.today().strftime('%Y%m%d%H%M'))      
+        with open("tweet_list.csv", "r") as csvfile: #file contains a header
+            reader = csv.reader(csvfile)
+            counts = list(reader)[1:]
+            
+            result = list(filter(None, counts))
+            tweet_details_dictList = []
+            
+            for tweet in result:
+                try:
+                    result = scrape_tweet(tweet[0])
+                    tweet_text = remove_non_utf8(result[0].replace("\n\n",". ").replace("\n"," ").replace(",",";")).replace("â€™","'").replace("â€œ",'"').replace("â€",'"') #replace new lines with a full-stop and commas with semi-colons to resolve formatting issues when saving as csv
+                    tweet_tags = result[1]
+                    tweet_links = result[2]
+                    tweet_views = result[3] 
+                    tweet_likes = result[4]
+                    tweet_rts = result[5]
+                    tweet_replies = result[6]
+                    tweet_bm = result[7]
+                    tweet_date = result[8].replace("·",". ").replace(","," ").replace("\n"," ").replace("Last edited","")
+                      
+                    time.sleep(3) #extra buffer to prevent rate limit issues
+                except:
+                    print("Failed to grab tweet %s" % tweet[0])
+                    continue
+                
+                if tweet_text:
+                    tweet_text_dict = {}
+                    tweet_text_dict['id']=tweet[0][-19:]
+                    tweet_text_dict['text']=tweet_text[1:] #[1:] removes the leading space caused by the replace operators in line 102
+                    tweet_text_dict['tags'] = tweet_tags[1:]
+                    tweet_text_dict['links'] = tweet_links[1:]
+                    tweet_text_dict['views'] = tweet_views   
+                    tweet_text_dict['likes'] = tweet_likes 
+                    tweet_text_dict['rts'] = tweet_rts 
+                    tweet_text_dict['replies'] = tweet_replies 
+                    tweet_text_dict['bookmarks'] = tweet_bm 
+                    tweet_text_dict['date'] = tweet_date              
+                    
+                    tweet_details_dictList.append(tweet_text_dict)
+            
+                else:
+                    print("Failed to retrieve tweet text %s" % tweet[0])
+            
+            filename = timestamp + '_tweet-details.csv'
+            
+            #print(tweet_details_dictList)
+            with open(filename, 'w', encoding='utf-8') as file: 
+                # Write the header 
+                header = ','.join(tweet_details_dictList[0].keys())  # Get the keys from the first dictionary 
+                file.write(header + '\n')  # Write header followed by a newline 
+                 
+                # Write the data 
+                for entry in tweet_details_dictList: 
+                    row = ','.join(str(entry[key]) for key in entry)  # Convert each value to string and join with commas 
+                    file.write(row + '\n')  # Write each row followed by a newline 
+             
+            print(f"Data exported to {filename}")   
+            print( "END TIME: ", datetime.today().strftime('%Y%m%d%H%M')) 
+            
+        except Exception as e:
+            print(f"Error: {e}")
